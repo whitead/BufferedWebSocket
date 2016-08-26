@@ -1,0 +1,41 @@
+
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Flask-SocketIO Test</title>
+
+    <script type="text/javascript" charset="utf-8">
+      function begin() {
+      console.log("Creating socket");
+      var ws = new WebSocket("ws://localhost:8888/sim/pos");
+      ws.binaryType = 'arraybuffer';
+      ws.onopen = function(e) {
+          var req = 2;
+          var b = new ArrayBuffer(4);
+          new DataView(b).setInt32(0, req, false) //get big endian
+          ws.send(b);
+      };
+      ws.onmessage = function(e) {
+          var v = new DataView(e.data).getInt32(0, false) //get big endian
+          console.log('received data for frame ' + v);
+      
+      
+      };
+      ws.onerror = function(e) {
+          console.log('error: ' + e);
+      };
+      ws.onclose = function() {
+          console.log('closed socket');
+      };
+
+      }
+    </script>
+  </head>
+
+  <body>
+    <a href="/sim/test"><h3> Sim Info</h3> </a>
+    <br/>
+    <input id="key" type="text" name="UUID Key" placeholder="lots of numbers"></input>
+    <button onClick="begin()"> Start </button>
+  </body>
+</html>
