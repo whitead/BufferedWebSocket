@@ -22,10 +22,11 @@ DATA_LENGTH_BYTES = 4
 CHUNK_BYTES = 4
 WS_TTL = 1000
 WS_PROTOCOL = 'ws://'
+_DEBUG_LEN = 10
 
 def load_dataset(name, key):
     assert name == 'test', 'no dataset loader has been written'
-    return np.ones(10, dtype=np.float32)
+    return np.random.rand(_DEBUG_LEN).astype(np.float32)
 
 def get_max_buffer_size(key):
     return len(loaded_data[key])
@@ -34,6 +35,7 @@ def increment_iterator(key):
     if(loaded_data_iters[key] == 10):
         raise StopIteration()
     loaded_data_iters[key] += 1
+    loaded_data[key] = np.random.rand(_DEBUG_LEN).astype(np.float32)
 
 def reset_iterator(key):
     loaded_data_iters[key] = 0
@@ -82,7 +84,10 @@ class SInfoHandler(web.RequestHandler):
                 'ws_url': WS_PROTOCOL + self.request.host + '/sim/' + key + '/pos',
                 'key_bytes': FRAME_BYTES,
                 'len_bytes': DATA_LENGTH_BYTES,
-                'max_buffer_size': get_max_buffer_size(key) * CHUNK_BYTES 
+                'max_buffer_size': get_max_buffer_size(key) * CHUNK_BYTES,
+                'elements': ['O' for _ in range(_DEBUG_LEN)],
+                'atom_number': _DEBUG_LEN,
+                'max_frames': 100
                 }
         self.write(data)
     

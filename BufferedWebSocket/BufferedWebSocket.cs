@@ -79,6 +79,12 @@ namespace BufferedWebSockets
             return Get(key, out b);
         }
 
+        public uint Get(uint key, out byte[] b)
+        {
+            return Get((ulong) key, out b);
+        }
+
+
         public uint Get(ulong key, out byte[] b)
         {
             b = null;
@@ -89,20 +95,24 @@ namespace BufferedWebSockets
                     read[i] = true;
                     b = buffers[i];
                     return sizes[i];
-                    
+
                 }
             }
 
             return 0;
         }
 
+        public uint GetFloats(uint key, ref float[] buffer) {
+            return GetFloats((ulong) key, ref buffer);
+        }
+
         public uint GetFloats(ulong key, ref float[] buffer)
         {
             byte[] b;
             uint N = Get(key, out b);
-            if(b != null)
+            if (b != null)
             {
-                System.Buffer.BlockCopy(b, 0, buffer, 0, (int) N);
+                System.Buffer.BlockCopy(b, 0, buffer, 0, (int)N);
             }
             return N;
         }
@@ -114,10 +124,16 @@ namespace BufferedWebSockets
             {
                 if (key == keys[i])
                 {
-                    read[i] = true;                    
+                    read[i] = true;
                 }
             }
         }
+
+        public async Task Request(uint key)
+        {
+            await Request((ulong) key);
+        }
+            
 
         public async Task Request(ulong key)
         {            

@@ -14,7 +14,7 @@ namespace BufferedWebSockets
         public string ws_url { get; set; } //place to get websocket
         public uint max_buffer_size { get; set; }//how big the buffers will need to be (in bytes!)        
 
-        public void Parse(string json)
+        public virtual void Parse(string json)
         {
             JsonObject root = JsonValue.Parse(json).GetObject();
             key_bytes = (uint)root.GetNamedNumber("key_bytes");
