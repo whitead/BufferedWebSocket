@@ -13,14 +13,14 @@ namespace BufferedWebSocketTests
         [TestMethod]
         public async Task TestConnect()
         {
-            var ws = new BufferedWebSocket<Metadata>(new Uri(testUri), 1);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 1);
             var info = await ws.Connect();
         }
 
         [TestMethod]
         public async Task TestSimpleRequest()
         {
-            var ws = new BufferedWebSocket<Metadata>(new Uri(testUri), 1);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 1);
             var info = await ws.Connect();
             int start = ws.ReadyUnreadBuffers;
             Assert.AreEqual(start, 0, 0);
@@ -50,7 +50,7 @@ namespace BufferedWebSocketTests
         public async Task TestRequestKeyManagement1()
         {
 
-            var ws = new BufferedWebSocket<Metadata>(new Uri(testUri), 1);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 1);
             var info = await ws.Connect();
             await ws.Request(0);
             await ws.Request(1);
@@ -80,7 +80,7 @@ namespace BufferedWebSocketTests
         public async Task TestRequestKeyManagementLives()
         {
 
-            var ws = new BufferedWebSocket<Metadata>(new Uri(testUri), 5);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 5);
             var info = await ws.Connect();
             for (uint i = 0; i < 5; i++)
                 await ws.Request(i);
@@ -118,7 +118,7 @@ namespace BufferedWebSocketTests
         [TestMethod]
         public async Task TestFloats()
         {
-            var ws = new BufferedWebSocket<Metadata>(new Uri(testUri), 1);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 1);
             var info = await ws.Connect();            
             await ws.Request(0);
 

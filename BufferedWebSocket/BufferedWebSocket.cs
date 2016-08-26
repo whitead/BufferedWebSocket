@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,7 +28,7 @@ namespace BufferedWebSockets
      * 
      * 
      */
-    public class BufferedWebSocket<T> where T : Metadata
+    public class BufferedWebSocket<T> where T : Metadata, new()
     {
         private uint bufferNumber;
         private byte[][] buffers;
@@ -54,12 +53,12 @@ namespace BufferedWebSockets
             }
         }
 
-        public BufferedWebSocket(Uri uri, uint bufferNumber) {
+        public BufferedWebSocket(string uri, uint bufferNumber) {
 
             if (bufferNumber == 0)
                 throw new Exception("Must have at least one buffer");
 
-            initiateURI = uri;
+            initiateURI = new Uri(uri);
             this.bufferNumber = bufferNumber;
             buffers = new byte[bufferNumber][];
             loaded = new bool[bufferNumber];
@@ -192,7 +191,8 @@ namespace BufferedWebSockets
         {
             var client = new HttpClient();
             string response = await client.GetStringAsync(initiateURI);
-            info = JsonConvert.DeserializeObject<T>(response);
+            info = new T();
+            info.Parse(response);
             if (info == null)
             {
                 throw new Exception("Unable to process server response: " + response);
