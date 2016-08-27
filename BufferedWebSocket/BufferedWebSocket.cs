@@ -208,10 +208,12 @@ namespace BufferedWebSockets
             var client = new HttpClient();
             string response = await client.GetStringAsync(initiateURI);
             info = new T();
-            info.Parse(response);
-            if (info == null)
+            try
             {
-                throw new Exception("Unable to process server response: " + response);
+                info.Parse(response);
+            } catch(Exception e)            
+            {
+                throw new Exception("Unable to process server response: " + response + " \r\n Error: " + e.Message);
             }
             return info;
         }
@@ -239,8 +241,8 @@ namespace BufferedWebSockets
                     if (keys[i] == key)
                         break;
                 }
-                if (i == bufferNumber)
-                    return; //this message must be no longer needed
+                if (i == bufferNumber || N == 0)
+                    return; //this message must be no longer needed or does not exist
                 
                 //lazily make our buffer.
                 if (buffers[i] == null)

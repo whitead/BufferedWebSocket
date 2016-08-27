@@ -18,6 +18,14 @@ namespace BufferedWebSocketTests
         }
 
         [TestMethod]
+        public async Task TestSimConnect()
+        {
+            var ws = new BufferedWebSocket<Siminfo>(testUri, 1);
+            var info = await ws.Connect();
+            Assert.IsNotNull(info.Elements);
+        }
+
+        [TestMethod]
         public async Task TestSimpleRequest()
         {
             var ws = new BufferedWebSocket<Metadata>(testUri, 1);

@@ -87,7 +87,7 @@ class SInfoHandler(web.RequestHandler):
                 'max_buffer_size': get_max_buffer_size(key) * CHUNK_BYTES,
                 'elements': ['O' for _ in range(_DEBUG_LEN)],
                 'atom_number': _DEBUG_LEN,
-                'max_frames': 100
+                'frame_number': 100
                 }
         self.write(data)
     
