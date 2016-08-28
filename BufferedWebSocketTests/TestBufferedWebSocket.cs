@@ -123,12 +123,69 @@ namespace BufferedWebSocketTests
             }
         }
 
+        /*
+        * Test the normal usage -> forard iteration
+        */
+        [TestMethod]
+        public async Task TestRequestUsualPattern()
+        {
+
+            var ws = new BufferedWebSocket<Metadata>(testUri, 3);
+            var info = await ws.Connect();
+            for (uint i = 0; i < 3; i++)
+                await ws.Request(i);            
+
+            //all this work to wait for buffer
+            //attach our event handler
+            bool ready = false;
+            bool ready2 = false;
+            ws.KeyLoadedEvent += delegate (Object sender, ulong e)
+            {
+                if (!ready && e == 2)
+                    ready = true;
+                if (!ready2 && e == 5)
+                    ready2 = true;
+            };
+            //wait for messages to come back
+            for (int i = 0; i < 10; i++)
+            {
+                Task.Delay(50).Wait();
+                if (ready)
+                    break;
+            }
+            Assert.IsTrue(ready);
+
+            //fetch and request
+            for (uint i = 0; i < 3; i++)
+            {
+                Assert.AreNotEqual(ws.Get(i), 0, 0);
+                await ws.Request(i + 3);
+            }
+
+            //wait for messages to come back
+            for (int i = 0; i < 10; i++)
+            {
+                Task.Delay(50).Wait();
+                if (ready2)
+                    break;
+            }
+            Assert.IsTrue(ready2);
+            //make sure we were able to get past our initial batch
+            for (uint i = 3; i < 6; i++)
+            {
+                //need to check that array is null because we may have exceeded number of frames
+                byte[] b;
+                ws.Get(i, out b);
+                Assert.IsNotNull(b);
+            }
+        }
+
         [TestMethod]
         public async Task TestFloats()
         {
-            var ws = new BufferedWebSocket<Metadata>(testUri, 1);
+            var ws = new BufferedWebSocket<Metadata>(testUri, 2);
             var info = await ws.Connect();            
-            await ws.Request(0);
+            await ws.Request(15);
 
             //all this work to wait for buffer
             //attach our event handler
@@ -147,7 +204,7 @@ namespace BufferedWebSocketTests
 
             float[] result = new float[1000];
             result[0] = 0f;
-            uint size = ws.GetFloats(0, ref result);
+            uint size = ws.GetFloats(15, ref result);
             Assert.AreNotEqual(size, 0, 0);
             Assert.AreNotEqual(result[0], 0f, 0f);
         }
