@@ -10,7 +10,7 @@ namespace BufferedWebSockets
         //underlying JSON since these are meant to be accessed
         public List<string> Elements { get; set; }
         public ulong FrameNumber { get; set;}
-        public ulong AtomNumber { get; set; }
+        public ulong AtomNumber { get; set; } 
 
         public override void Parse(string json)
         {
